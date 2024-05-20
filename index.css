@@ -96,3 +96,50 @@ tbody td {
 .button-like:hover {
     background-color: #0056b3;
 }
+
+.expense-table {
+    margin-bottom: 20px;
+}
+
+.expense-table {
+    margin-bottom: 20px;
+}
+
+.expense-table {
+    margin-bottom: 20px;
+}
+
+#pagination-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#pagination-controls button, #pagination-controls .page-number {
+    border: none;
+    padding: 5px 10px;
+    margin: 0 5px;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+#pagination-controls button {
+    background-color: #007bff; /* Button color */
+    color: white;
+}
+
+#pagination-controls .page-number {
+    background-color: #f0f0f0; /* Default page number color */
+    color: black;
+}
+
+#pagination-controls .page-number:nth-child(even) {
+    background-color: #dcdcdc; /* Alternating color for page numbers */
+}
+
+#pagination-controls button:disabled, #pagination-controls .page-number.active {
+    background-color: #cccccc; /* Disabled button and active page number color */
+    cursor: not-allowed;
+}

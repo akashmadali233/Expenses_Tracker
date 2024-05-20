@@ -36,87 +36,98 @@ function addNewExpense(event){
 }
 
 
-window.addEventListener('DOMContentLoaded', ()=> {
-    fetch('http://localhost:8080/api/expense/getexpense',{
-        method : 'GET',
-        headers : {
+
+let currentPage = 1;
+let limit = getSelectedExpensesPerPage(); 
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadExpenses(currentPage);
+
+    document.getElementById('prev-page').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadExpenses(currentPage);
+        }
+    });
+
+    document.getElementById('next-page').addEventListener('click', () => {
+        currentPage++;
+        loadExpenses(currentPage);
+    });
+});
+
+// Function to get the selected number of expenses per page from the dropdown menu
+function getSelectedExpensesPerPage() {
+    const selectElement = document.getElementById('expenses-per-page');
+    return parseInt(selectElement.value);
+}
+
+// Function to update expenses per page when the dropdown selection changes
+function updateExpensesPerPage() {
+    limit = getSelectedExpensesPerPage();
+    currentPage = 1; // Reset current page when changing the limit
+    loadExpenses(currentPage); // Reload expenses with new limit
+}
+
+function loadExpenses(page) {
+    fetch(`http://localhost:8080/api/expense/getexpense?page=${page}&limit=${limit}`, {
+        method: 'GET',
+        headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token 
+            'Authorization': 'Bearer ' + token
         }
     })
     .then(response => response.json())
     .then(data => {
         addNewExpenseToUI(data.expenses);
-    })
-    .catch((error) => {
-        console.log(error);
-    })
-})          
-
-
-window.addEventListener('DOMContentLoaded', () => {
-    fetch('http://localhost:8080/api/getalls3buckets', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token 
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        addingNewLinksToUI(data.success.links);
+        updatePaginationControls(data.currentPage, data.totalPages);
+        document.getElementById('total-amount').textContent = parseFloat(data.totalExpenses).toFixed(2);
     })
     .catch((error) => {
         console.log(error);
     });
-});
-
-function addingNewLinksToUI(links) {
-    const s3bucketlink = document.getElementById("s3buckets-link");
-    s3bucketlink.innerHTML = "";
-    s3bucketlink.innerHTML = `
-        <h2>User Total Expenses</h2>
-        <table>
-            <thead> 
-                <tr> 
-                    <th>File URL</th> 
-                    <th>Created At</th> 
-                </tr> 
-            </thead> 
-            <tbody>
-                ${links.map(link => `
-                    <tr>
-                        <td><a href="${link.fileURL}">${'DownloadFile'}</a></td>
-                        <td>${new Date(link.createdAt).toLocaleString()}</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
-    `;
 }
 
-            
-function addNewExpenseToUI(expenses){
+function addNewExpenseToUI(expenses) {
     const expenseList = document.getElementById("expense-list");
-    const totalAmountElement = document.getElementById("total-amount");
 
     expenseList.innerHTML = "";
-    let totalAmount = 0; 
-    for (let i = 0; i < expenses.length; i++) { 
-        const expense = expenses[i]; 
-        const expenseRow = document.createElement("tr")
+    expenses.forEach(expense => {
+        const expenseRow = document.createElement("tr");
         expenseRow.innerHTML = `
-        <td>${expense.amount}</td>
-        <td>${expense.description}</td> 
-        <td>${expense.category}</td> 
-        <td class="delete-btn" data-id="${expense.id}" onclick="deleteExpensedetails(this)">Delete</td>  `;
-
-        expenseList.appendChild(expenseRow); 
-        totalAmount += JSON.parse(expense.amount); 
-    }
-    totalAmountElement.textContent = totalAmount.toFixed(2); 
+            <td>${expense.amount}</td>
+            <td>${expense.description}</td>
+            <td>${expense.category}</td>
+            <td class="delete-btn" data-id="${expense.id}" onclick="deleteExpensedetails(this)">Delete</td>`;
+        expenseList.appendChild(expenseRow);
+    });
 }
-   
+
+function updatePaginationControls(currentPage, totalPages) {
+    const pageNumbersContainer = document.getElementById('page-numbers');
+    pageNumbersContainer.innerHTML = "";
+
+    for (let i = 1; i <= totalPages; i++) {
+        const pageNumberButton = document.createElement('button');
+        pageNumberButton.classList.add('page-number');
+        pageNumberButton.textContent = i;
+        if (i === currentPage) {
+            pageNumberButton.classList.add('active');
+            pageNumberButton.disabled = true;
+        }
+        pageNumberButton.addEventListener('click', () => {
+            currentPage = i;
+            loadExpenses(currentPage);
+        });
+        pageNumbersContainer.appendChild(pageNumberButton);
+    }
+
+    const prevButton = document.getElementById('prev-page');
+    const nextButton = document.getElementById('next-page');
+
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage === totalPages;
+}
 
 
 function deleteExpensedetails(element){
@@ -278,6 +289,50 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+
+window.addEventListener('DOMContentLoaded', () => {
+    fetch('http://localhost:8080/api/getalls3buckets', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token 
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        addingNewLinksToUI(data.success.links);
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+});
+
+function addingNewLinksToUI(links) {
+    const s3bucketlink = document.getElementById("s3buckets-link");
+    s3bucketlink.innerHTML = "";
+    s3bucketlink.innerHTML = `
+        <h2>User Total Expenses</h2>
+        <table>
+            <thead> 
+                <tr> 
+                    <th>File URL</th> 
+                    <th>Created At</th> 
+                </tr> 
+            </thead> 
+            <tbody>
+                ${links.map(link => `
+                    <tr>
+                        <td><a href="${link.fileURL}">${'DownloadFile'}</a></td>
+                        <td>${new Date(link.createdAt).toLocaleString()}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+}
+
+
+
 async function download(event) {
     event.preventDefault();
     const downloadButton = document.getElementById('downloadButton');
@@ -308,3 +363,5 @@ async function download(event) {
         downloadButton.disabled = false; 
     }
 }
+
+

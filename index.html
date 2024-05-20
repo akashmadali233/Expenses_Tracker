@@ -27,32 +27,48 @@
             </button> 
         </form> 
 
-
+        
         <div id="premium-container" style="display: none;">
             You are a premium member
             <button id="show-details-btn" class="button-like">Show Leaderboard</button>
-            <button id="downloadButton" class="button-like" onclick="download(event)">Download File</button>
-        </div>                
+            <button id="downloadButton" class="button-like" onclick="download(event)" style="margin-right: 170px;">Download File</button>
+        
+            <label for="expenses-per-page" style="margin-left: 10px;">Expenses per Page:</label>
+            <select id="expenses-per-page" onchange="updateExpensesPerPage()">
+                <option value="05">05</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+                       
         <button id="rzp1-button" class="button-like" style="display: none;">Buy Premium</button>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
         
-        <div class="expense-table"> 
-            <table> 
-                <thead> 
-                    <tr> 
-                        <th>Amount</th> 
-                        <th>Description</th> 
-                        <th>Category</th> 
+        
+        <div class="expense-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Amount</th>
+                        <th>Description</th>
+                        <th>Category</th>
                         <th>Action</th>
-                    </tr> 
-                </thead> 
-                <tbody id="expense-list"></tbody> 
-            </table> 
-            <div class="total-amount"> 
-                <strong>Total:</strong>  
-                $<span id="total-amount">0</span> 
-            </div> 
-        </div> 
+                    </tr>
+                </thead>
+                <tbody id="expense-list"></tbody>
+            </table>
+            <div class="total-amount">
+                <strong>Total:</strong>
+                $<span id="total-amount">0</span>
+            </div>
+        </div>
+        <div id="pagination-controls">
+            <button id="prev-page" disabled>Previous</button>
+            <div id="page-numbers"></div>
+            <button id="next-page">Next</button>
+        </div>
 
         <div id="user-details" style="display: none;"></div>
         <div id="s3buckets-link"></div>
