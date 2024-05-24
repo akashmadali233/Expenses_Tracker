@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+//adding new expenses
 function addNewExpense(event){
     event.preventDefault();
     const expenseDetails = {
@@ -14,7 +15,7 @@ function addNewExpense(event){
         description : event.target.description.value,
         category : event.target.category.value
     }
-    console.log(expenseDetails);
+   
     fetch('http://localhost:8080/api/expense/addexpense',{
         method : 'POST',
         headers : {
@@ -27,14 +28,13 @@ function addNewExpense(event){
         if(response.status === 201){
             window.location.reload();
         }else{
-            throw new console.log("Failed to create new expense");
+            showErrorToast('Somthing went wrong');
         }
     })
     .catch((error) => {
-        console.log(error);
+        showErrorToast('Somthing went wrong');
     })
 }
-
 
 
 let currentPage = 1;
@@ -65,9 +65,10 @@ function getSelectedExpensesPerPage() {
 // Function to update expenses per page when the dropdown selection changes
 function updateExpensesPerPage() {
     limit = getSelectedExpensesPerPage();
-    currentPage = 1; // Reset current page when changing the limit
-    loadExpenses(currentPage); // Reload expenses with new limit
+    currentPage = 1;
+    loadExpenses(currentPage); 
 }
+
 
 function loadExpenses(page) {
     fetch(`http://localhost:8080/api/expense/getexpense?page=${page}&limit=${limit}`, {
@@ -84,7 +85,7 @@ function loadExpenses(page) {
         document.getElementById('total-amount').textContent = parseFloat(data.totalExpenses).toFixed(2);
     })
     .catch((error) => {
-        console.log(error);
+        showErrorToast('Somthing went wrong');
     });
 }
 
@@ -102,6 +103,7 @@ function addNewExpenseToUI(expenses) {
         expenseList.appendChild(expenseRow);
     });
 }
+
 
 function updatePaginationControls(currentPage, totalPages) {
     const pageNumbersContainer = document.getElementById('page-numbers');
@@ -130,6 +132,7 @@ function updatePaginationControls(currentPage, totalPages) {
 }
 
 
+//deleting the expenses
 function deleteExpensedetails(element){
     let id = element.getAttribute('data-id');
 
@@ -145,15 +148,17 @@ function deleteExpensedetails(element){
         if(response.status === 200){4
             window.location.reload();
         }else{
-            console.log("Failed to create new expense");
+            //console.log("Failed to create new expense");
+            showErrorToast('Failed to create new expense');
         }
     })
     .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        showErrorToast('Somthing went wrong');
     })
 }
 
-
+//Razorpay for taking premium user 
 document.getElementById('rzp1-button').onclick = async function(e) {
     e.preventDefault(); 
     try {
@@ -192,8 +197,9 @@ document.getElementById('rzp1-button').onclick = async function(e) {
                         alert("Payment failed: " + updateData.error);
                     }
                 } catch (error) {
-                    console.error('Error updating transaction status:', error);
-                    alert("Error updating transaction status: " + error.message);
+                    //console.error('Error updating transaction status:', error);
+                    //alert("Error updating transaction status: " + error.message);
+                    showErrorToast('Somthing went wrong');
                 }
             },
         };
@@ -201,8 +207,8 @@ document.getElementById('rzp1-button').onclick = async function(e) {
         const rzp1 = new Razorpay(options);
         rzp1.open();
     } catch (error) {
-        console.error('Error:', error);
-        alert("Error: " + error.message);
+        //console.error('Error:', error);
+        showErrorToast('Somthing went wrong');
     }
 };
 
@@ -228,7 +234,8 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     })
     .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        showErrorToast('Somthing went wrong');
     });
 });
 
@@ -258,7 +265,8 @@ document.addEventListener("DOMContentLoaded", function() {
             showUserDetails(data.expenses);
         })
         .catch(error => {
-            console.log('Error fetching user details:', error);
+            //console.log('Error fetching user details:', error);
+            showErrorToast('Somthing went wrong');
         });
     }
 
@@ -303,7 +311,8 @@ window.addEventListener('DOMContentLoaded', () => {
         addingNewLinksToUI(data.success.links);
     })
     .catch((error) => {
-        console.log(error);
+        //console.log(error);
+        showErrorToast('Somthing went wrong');
     });
 });
 
@@ -355,10 +364,12 @@ async function download(event) {
             a.click();
             alert('File downloaded successfully!');
         } else {
-            console.log('Error:', data.error.message);
+            //console.log('Error:', data.error.message);
+            showErrorToast('Somthing went wrong');
         }
     } catch (error) {
-        console.log('Error:', error);
+        //console.log('Error:', error);
+        showErrorToast('Somthing went wrong');
     }finally{
         downloadButton.disabled = false; 
     }

@@ -1,16 +1,14 @@
-
+//Toaster meassage
 function showSuccessToast(message, callback) {
-    console.log("success",message);
     showToast(message, 'success', callback);
 }
 
 function showErrorToast(message, callback) {
-    console.log("error",message);
     showToast(message, 'error', callback);
 }
 
 function showToast(message, type, callback) {
-    console.log("final",message);
+
     const toastContainer = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.classList.add('toast', type);
@@ -26,6 +24,7 @@ function showToast(message, type, callback) {
     }, 2000);
 }
 
+//signup
 function signUp(event) {
     event.preventDefault();
 
@@ -72,7 +71,7 @@ function signUp(event) {
 
 }
 
-
+//login 
 function signIn(event){
     event.preventDefault();
 
@@ -114,10 +113,10 @@ function signIn(event){
     .catch(error => {
         showErrorToast('Error during signup. Please try again.');
     });
-    console.log(bodyParams);
 }
 
 
+//request for password
 async function handleResetRequest() {
     const email = document.getElementById('email').value;
     
@@ -145,6 +144,7 @@ async function handleResetRequest() {
 }
 
 
+//password changing
 async function handleChangePassword() {
     const urlParams = new URLSearchParams(window.location.search);
     const resetId = urlParams.get('id');
