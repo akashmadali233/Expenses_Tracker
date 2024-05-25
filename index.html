@@ -36,15 +36,16 @@
             You are a premium member
             <button id="show-details-btn" class="button-like">Show Leaderboard</button>
             <button id="downloadButton" class="button-like" onclick="download(event)" style="margin-right: 170px;">Download File</button>
-        
-            <label for="expenses-per-page" style="margin-left: 10px;">Expenses per Page:</label>
-            <select id="expenses-per-page" onchange="updateExpensesPerPage()">
-                <option value="05">05</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-            </select>
         </div>
+
+        <label for="expenses-per-page" style="margin-left: 600px;">Expenses per Page:</label>
+        <select id="expenses-per-page" onchange="updateExpensesPerPage()">
+            <option value="05">05</option>
+            <option value="10">10</option>
+            <option value="15">15</option>
+            <option value="20">20</option>
+        </select>
+
           <!-- showing premium button -->             
         <button id="rzp1-button" class="button-like" style="display: none;">Buy Premium</button>
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
